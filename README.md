@@ -8,7 +8,7 @@ Designed for moving sessions from one session engine to another, and separate re
 Installation
 ------------
 
-**Depend on `redis` package.**
+> **Depend on `redis` package.**
 
 1. Download the archive and run `https://github.com/zhangyonglei/acs_redis_multi_sessions`
 
