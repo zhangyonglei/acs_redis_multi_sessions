@@ -10,7 +10,7 @@ Installation
 
 > **Depend on `redis` package.**
 
-1. Download the archive `https://github.com/zhangyonglei/acs_redis_multi_sessions`, and copy `acs_redis_multi_sessions` path into the directory of python `site-packages/dist-packages` location.
+1. Download the archive `https://github.com/zhangyonglei/acs_redis_multi_sessions`, and copy `acs_redis_multi_sessions` path into the directory of python `site-packages` or `dist-packages` location.
 
 2. Set ``acs_redis_multi_sessions.session`` as your session engine, like so::
 
