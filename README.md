@@ -108,3 +108,14 @@ SESSION_REDIS_POOL = [
 * "read"   - Allows launch "load" method;
 * "write"  - Allows launch "save" and "create" method;
 * "delete" - Allows launch the "delete" method.
+
+6. Test
+ Go to `test` path. and run `python manage.py runserver`, then visit `http://127.0.0.1:8000/test/`.
+
+7. Validate and check keys
+```
+redis-cli -h localhost -p 6379 -n 0 KEYS \*
+redis-cli -h localhost -p 6379 -n 1 KEYS \*
+```
+
+
