@@ -12,7 +12,7 @@ Installation
 
 1. Download the archive `https://github.com/zhangyonglei/acs_redis_multi_sessions`, and copy `acs_redis_multi_sessions/acs_redis_multi_sessions` path into the directory of python `site-packages` or `dist-packages` location. Or run `python setup.py install`.
 
-2. Set ``acs_redis_multi_sessions.session`` as your session engine, like so::
+2. Set `acs_redis_multi_sessions.session` as your session engine, like so::
 
         SESSION_ENGINE = "acs_redis_multi_sessions.session"
 
@@ -112,10 +112,48 @@ SESSION_REDIS_POOL = [
 6. Test
  Go to `test` path. and run `python manage.py runserver`, then visit `http://127.0.0.1:8000/test/`.
 
-7. Validate and check keys
+8. Validate and check keys
+
 ```
 redis-cli -h localhost -p 6379 -n 0 KEYS \*
 redis-cli -h localhost -p 6379 -n 1 KEYS \*
 ```
 
+9. Debug Output
+Put below code block into your `settings.py` file
 
+```
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': 'test.log',
+            'maxBytes': 1048576,
+            'backupCount': 10
+        },
+    },
+    'loggers': {
+        'acs_redis_multi_sessions': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+        },
+    }
+}
+```
