@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import random
 import redis
 from django.conf import settings
 from django.contrib.sessions.backends.base import SessionBase, CreateError
@@ -257,15 +258,15 @@ class SessionStore(SessionBase):
                 continue
 
     def _get_backends(self, modes=tuple()):
-        """Return available backends by modes
+        """Return available backends by modes with random order
         @return list
         """
         if not modes:
-            return list(self.pool_backends)
+            return random.shuffle(list(self.pool_backends))
         else:
             backends = []
             for backend in self.pool_backends:
                 if any(map(lambda mode: mode in backend['modes'], modes)):
                     backends.append(backend)
 
-            return backends
+            return random.shuffle(backends)
