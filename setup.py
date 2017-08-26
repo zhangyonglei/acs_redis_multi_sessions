@@ -5,8 +5,7 @@ from acs_redis_multi_sessions import __version__
 def read(filename):
     return open(os.path.join(os.path.dirname(__file__), filename)).read()
 
-packages = ['acs_redis_multi_sessions']
-
+packages = ['acs_redis_multi_sessions', 'test', 'test.main', 'test.test',]
 
 setup(
     name='acs_redis_multi_sessions',

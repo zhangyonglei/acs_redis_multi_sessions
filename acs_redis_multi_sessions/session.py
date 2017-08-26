@@ -261,12 +261,14 @@ class SessionStore(SessionBase):
         """Return available backends by modes with random order
         @return list
         """
+
+        backends = []
         if not modes:
-            return random.shuffle(list(self.pool_backends))
+            backends = list(self.pool_backends)
         else:
-            backends = []
             for backend in self.pool_backends:
                 if any(map(lambda mode: mode in backend['modes'], modes)):
                     backends.append(backend)
 
-            return random.shuffle(backends)
+        random.shuffle(backends)
+        return backends
