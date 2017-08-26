@@ -141,3 +141,42 @@ ACS_SESSION_MULTISESSIONS_POOL = (
     },
 )
 
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': os.path.join(BASE_DIR, 'test.log'),
+            'maxBytes': 1048576,
+            'backupCount': 10
+        },
+    },
+    'loggers': {
+        'acs_redis_multi_sessions': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+        },
+        # 'django.db.backends': {
+        #     'handlers': ['sqlfile'],
+        #     'level': 'DEBUG',
+        # }
+    }
+}
+
