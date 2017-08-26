@@ -2,6 +2,8 @@
 
 import random
 import redis
+import logging
+
 from django.conf import settings
 from django.contrib.sessions.backends.base import SessionBase, CreateError
 try:
@@ -12,6 +14,8 @@ except ImportError:  # Python 3.*
 class Dict(object):
     def __init__(self, _dict):
         self.__dict__.update(_dict)
+
+logger = logging.getLogger('acs_redis_multi_sessions')
 
 class RedisServer():
     __redis = {}
@@ -187,15 +191,26 @@ class ACSSessionStore(SessionBase):
             return session_key
         return ':'.join([prefix, session_key])
 
+
 class SessionStore(SessionBase):
     def __init__(self, session_key=None):
+        if settings.DEBUG:
+            logger.debug('Call "__init__"')
+
         super(SessionStore, self).__init__(session_key)
-        self.pool_backends = settings.ACS_SESSION_MULTISESSIONS_POOL
+        self.pool_backends = list(settings.ACS_SESSION_MULTISESSIONS_POOL)
+        random.shuffle(self.pool_backends)
 
     def load(self):
+        if settings.DEBUG:
+            logger.debug('Call "load"')
+
         for backend in self.pool_backends:
             session = ACSSessionStore(self.session_key, backend)
             if session.exists(self.session_key):
+                if settings.DEBUG:
+                    logger.debug('Backend: "%s"' %  backend['backend'])
+
                 session_data = session.load()
                 return session_data
             else:
@@ -206,6 +221,9 @@ class SessionStore(SessionBase):
         return {}
 
     def exists(self, session_key):
+        if settings.DEBUG:
+            logger.debug('Call "exists"')
+
         for backend in self.pool_backends:
             try:
                 return ACSSessionStore(self.session_key, backend).exists(session_key)
@@ -215,6 +233,9 @@ class SessionStore(SessionBase):
         return False
 
     def create(self):
+        if settings.DEBUG:
+            logger.debug('Call "create"')
+
         while True:
             self._session_key = self._get_new_session_key()
             try:
@@ -229,6 +250,9 @@ class SessionStore(SessionBase):
             return
 
     def save(self, *a, **kw):
+        if settings.DEBUG:
+            logger.debug('Call "save"')
+
         backends = self._get_backends(modes=("write",))
         for backend in backends:
             try:
@@ -244,6 +268,9 @@ class SessionStore(SessionBase):
                 continue
 
     def delete(self, session_key=None):
+        if settings.DEBUG:
+            logger.debug('Call "delete"')
+
         if session_key is None:
             if self._session_key is None:
                 return
@@ -264,11 +291,10 @@ class SessionStore(SessionBase):
 
         backends = []
         if not modes:
-            backends = list(self.pool_backends)
+            backends = self.pool_backends
         else:
             for backend in self.pool_backends:
                 if any(map(lambda mode: mode in backend['modes'], modes)):
                     backends.append(backend)
 
-        random.shuffle(backends)
         return backends
